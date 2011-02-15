@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/core/"/>
+	<classpathentry kind="src" path="src/eclipseAgent/"/>
+	<classpathentry kind="src" path="src/installer/"/>
+	<classpathentry kind="src" path="src/delombok/"/>
+	<classpathentry kind="src" path="experimental/src/"/>
+	<classpathentry kind="src" path="test/transform/src/"/>
+	<classpathentry kind="src" path="test/core/src/"/>
+	<classpathentry kind="src" path="test/bytecode/src/"/>
+	<classpathentry kind="src" path=".apt_generated">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/build/core.runtime.jar" sourcepath="lib/contrib/core.runtime.zip"/>
+	<classpathentry kind="lib" path="lib/build/jdt.core.jar" sourcepath="lib/contrib/jdt.core.zip"/>
+	<classpathentry kind="lib" path="lib/build/jdt.ui.jar" sourcepath="lib/contrib/jdt.ui.zip"/>
+	<classpathentry kind="lib" path="lib/build/equinox.common.jar" sourcepath="lib/contrib/equinox.common.zip"/>
+	<classpathentry kind="lib" path="lib/build/osgi.jar" sourcepath="lib/contrib/osgi.zip"/>
+	<classpathentry kind="lib" path="lib/build/boot.jar"/>
+	<classpathentry kind="lib" path="lib/build/openide.modules.jar"/>
+	<classpathentry kind="lib" path="lib/build/openide.util.jar"/>
+	<classpathentry kind="lib" path="lib/build/modules.java.source.jar"/>
+	<classpathentry kind="lib" path="lib/build/lombok.patcher.jar"/>
+	<classpathentry kind="lib" path="lib/build/cmdreader.jar"/>
+	<classpathentry kind="lib" path="lib/build/ant.jar"/>
+	<classpathentry kind="lib" path="lib/build/spi.jar"/>
+	<classpathentry kind="lib" path="lib/build/ant-googlecode.jar"/>
+	<classpathentry kind="lib" path="lib/build/jsch.jar"/>
+	<classpathentry kind="lib" path="lib/build/jsch-ant-fixed.jar"/>
+	<classpathentry kind="lib" path="lib/build/markdownj.jar"/>
+	<classpathentry kind="lib" path="lib/build/java2html.jar"/>
+	<classpathentry kind="lib" path="lib/build/javac.jar" sourcepath="lib/contrib/javac.zip"/>
+	<classpathentry kind="lib" path="lib/build/ecj.jar" sourcepath="lib/contrib/ecj.zip"/>
+	<classpathentry kind="lib" path="lib/test/junit.jar"/>
+	<classpathentry kind="lib" path="lib/test/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/test/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/test/slf4j-api.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
