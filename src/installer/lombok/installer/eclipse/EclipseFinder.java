@@ -59,7 +59,7 @@ public class EclipseFinder extends IdeFinder {
 	}
 	
 	protected List<String> getSourceDirsOnWindows() {
-		return Arrays.asList("\\", "\\Program Files", "\\Program Files (x86)", System.getProperty("user.home", "."));
+		return Arrays.asList("\\Programs", "\\Program Files", "\\Program Files (x86)", System.getProperty("user.home", "."));
 	}
 	
 	/**
