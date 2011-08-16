@@ -19,7 +19,7 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 -->
-<project name="lombok" default="dist" xmlns:ivy="antlib:com.zwitserloot.ivyplusplus">
+<project name="lombok" default="run" xmlns:ivy="antlib:com.zwitserloot.ivyplusplus">
 	<description>
 This buildfile is part of projectlombok.org. It is the main entry point that contains
 the common tasks and can be called on to run the main aspects of all the sub-scripts.
@@ -702,4 +702,9 @@ You can also create your own by writing a 'testenvironment.properties' file. The
 			<property name="lombok.version" value="${lombok.version}" />
 		</ant>
 	</target>
+
+	<target name="run" description="Builds and runs THE lombok.jar." depends="dist">
+		<java jar="dist/lombok.jar" fork="true" />
+	</target>
+
 </project>
