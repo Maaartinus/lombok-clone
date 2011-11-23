@@ -31,12 +31,12 @@
 	<classpathentry kind="lib" path="lib/build/jsch-ant-fixed.jar"/>
 	<classpathentry kind="lib" path="lib/build/markdownj.jar"/>
 	<classpathentry kind="lib" path="lib/build/java2html.jar"/>
-	<classpathentry kind="lib" path="lib/build/javac.jar" sourcepath="lib/contrib/javac.zip"/>
-	<classpathentry kind="lib" path="lib/build/ecj.jar" sourcepath="lib/contrib/ecj.zip"/>
 	<classpathentry kind="lib" path="lib/test/junit.jar"/>
 	<classpathentry kind="lib" path="lib/test/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/test/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/test/slf4j-api.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="lib/ecj/ecj.jar"/>
+	<classpathentry kind="lib" path="lib/javac7/javac7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
