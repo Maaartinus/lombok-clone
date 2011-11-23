@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/core/"/>
+	<classpathentry kind="src" path="src/utils/"/>
 	<classpathentry kind="src" path="src/eclipseAgent/"/>
 	<classpathentry kind="src" path="src/installer/"/>
 	<classpathentry kind="src" path="src/delombok/"/>
+	<classpathentry kind="src" path="src/stubs/"/>
 	<classpathentry kind="src" path="experimental/src/"/>
 	<classpathentry kind="src" path="test/transform/src/"/>
 	<classpathentry kind="src" path="test/core/src/"/>
@@ -24,6 +26,7 @@
 	<classpathentry kind="lib" path="lib/build/modules.java.source.jar"/>
 	<classpathentry kind="lib" path="lib/build/lombok.patcher.jar"/>
 	<classpathentry kind="lib" path="lib/build/cmdreader.jar"/>
+	<classpathentry kind="lib" path="lib/build/jarjar.jar"/>
 	<classpathentry kind="lib" path="lib/build/ant.jar"/>
 	<classpathentry kind="lib" path="lib/build/spi.jar"/>
 	<classpathentry kind="lib" path="lib/build/ant-googlecode.jar"/>
@@ -31,12 +34,12 @@
 	<classpathentry kind="lib" path="lib/build/jsch-ant-fixed.jar"/>
 	<classpathentry kind="lib" path="lib/build/markdownj.jar"/>
 	<classpathentry kind="lib" path="lib/build/java2html.jar"/>
-	<classpathentry kind="lib" path="lib/test/junit.jar"/>
-	<classpathentry kind="lib" path="lib/test/log4j.jar"/>
-	<classpathentry kind="lib" path="lib/test/commons-logging.jar"/>
-	<classpathentry kind="lib" path="lib/test/slf4j-api.jar"/>
+	<classpathentry kind="lib" path="lib/build/javac6.jar" sourcepath="lib/contrib/javac6.zip"/>
+	<classpathentry kind="lib" path="lib/build/ant-launcher.jar"/>
+	<classpathentry kind="lib" path="lib/test/junit.jar" sourcepath="lib/contrib/junit.jar"/>
+	<classpathentry kind="lib" path="lib/test/log4j.jar" sourcepath="lib/contrib/log4j.jar"/>
+	<classpathentry kind="lib" path="lib/test/commons-logging.jar" sourcepath="lib/contrib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/test/slf4j-api.jar" sourcepath="lib/contrib/slf4j-api.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="lib/ecj/ecj.jar"/>
-	<classpathentry kind="lib" path="lib/javac7/javac7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
