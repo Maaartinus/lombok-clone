@@ -104,6 +104,7 @@ public class TransformationsUtil {
 	 * @return The getter name for this field, or {@code null} if this field does not fit expected patterns and therefore cannot be turned into a getter name.
 	 */
 	public static String toGetterName(AnnotationValues<Accessors> accessors, CharSequence fieldName, boolean isBoolean) {
+		isBoolean = false;
 		if (fieldName.length() == 0) return null;
 
 		Accessors ac = accessors.getInstance();
@@ -141,6 +142,7 @@ public class TransformationsUtil {
 	 * @return The setter name for this field, or {@code null} if this field does not fit expected patterns and therefore cannot be turned into a getter name.
 	 */
 	public static String toSetterName(AnnotationValues<Accessors> accessors, CharSequence fieldName, boolean isBoolean) {
+		isBoolean = false;
 		if (fieldName.length() == 0) return null;
 		Accessors ac = accessors.getInstance();
 		fieldName = removePrefix(fieldName, ac.prefix());
@@ -168,6 +170,7 @@ public class TransformationsUtil {
 	 * @param isBoolean if the field is of type 'boolean'. For fields of type 'java.lang.Boolean', you should provide {@code false}.
 	 */
 	public static List<String> toAllGetterNames(AnnotationValues<Accessors> accessors, CharSequence fieldName, boolean isBoolean) {
+		isBoolean = false;
 		if (!isBoolean) return Collections.singletonList(toGetterName(accessors, fieldName, false));
 
 		Accessors acc = accessors.getInstance();
@@ -199,6 +202,7 @@ public class TransformationsUtil {
 	 * @param isBoolean if the field is of type 'boolean'. For fields of type 'java.lang.Boolean', you should provide {@code false}.
 	 */
 	public static List<String> toAllSetterNames(AnnotationValues<Accessors> accessors, CharSequence fieldName, boolean isBoolean) {
+		isBoolean = false;
 		if (!isBoolean) return Collections.singletonList(toSetterName(accessors, fieldName, false));
 
 		Accessors acc = accessors.getInstance();
