@@ -60,5 +60,5 @@ public @interface Accessors {
 	 * booleans get processed as any other type.
 	 * Like the other options, this one breaks compatibility with Javabeans-conform frameworks.
 	 */
-	boolean consequent() default false;
+	boolean consequent() default true;
 }
