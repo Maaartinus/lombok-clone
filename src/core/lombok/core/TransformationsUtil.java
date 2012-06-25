@@ -160,6 +160,7 @@ public class TransformationsUtil {
 		if (fieldName.length() == 0) return null;
 		
 		Accessors ac = accessors.getInstance();
+		if (ac.consequent()) isBoolean = false;
 		fieldName = removePrefix(fieldName, ac.prefix());
 		if (fieldName == null) return null;
 		
@@ -219,12 +220,13 @@ public class TransformationsUtil {
 	private static List<String> toAllAccessorNames(AnnotationValues<Accessors> accessors, CharSequence fieldName, boolean isBoolean,
 			String booleanPrefix, String normalPrefix, boolean adhereToFluent) {
 		
+		Accessors acc = accessors.getInstance();
+		if (acc.consequent()) isBoolean = false;
 		if (!isBoolean) {
 			String accessorName = toAccessorName(accessors, fieldName, false, booleanPrefix, normalPrefix, adhereToFluent);
 			return (accessorName == null) ? Collections.<String>emptyList() : Collections.singletonList(accessorName);
 		}
 		
-		Accessors acc = accessors.getInstance();
 		fieldName = removePrefix(fieldName, acc.prefix());
 		if (fieldName == null) return Collections.emptyList();
 		

@@ -54,4 +54,11 @@ public @interface Accessors {
 	 * all turn into the same name when the prefix is stripped, an error will be generated.
 	 */
 	String[] prefix() default {};
+
+	/**
+	 * If true, the special Javabeans rules for {@code boolean} accessors get ignored and
+	 * booleans get processed as any other type.
+	 * Like the other options, this one breaks compatibility with Javabeans-conform frameworks.
+	 */
+	boolean consequent() default false;
 }
