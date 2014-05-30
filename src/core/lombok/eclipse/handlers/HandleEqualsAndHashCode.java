@@ -134,7 +134,7 @@ public class HandleEqualsAndHashCode extends EclipseAnnotationHandler<EqualsAndH
 		Boolean callSuper = ann.callSuper();
 		if (!annotation.isExplicit("callSuper")) callSuper = null;
 		Boolean precomputeHashCode = ann.precomputeHashCode();
-		if (!annotation.isExplicit("precomputeHashCode") || precomputeHashCode == null) precomputeHashCode = Boolean.TRUE;
+		if (!annotation.isExplicit("precomputeHashCode") || precomputeHashCode == null) precomputeHashCode = Boolean.FALSE;
 		if (!annotation.isExplicit("exclude")) excludes = null;
 		if (!annotation.isExplicit("of")) includes = null;
 		
@@ -682,8 +682,9 @@ public class HandleEqualsAndHashCode extends EclipseAnnotationHandler<EqualsAndH
 		
 		if (precomputeHashCode) {
 			FieldReference thisFieldAccessor = new FieldReference("$hashCode".toCharArray(), p);
+			thisFieldAccessor.receiver = new ThisReference(pS, pE);
 			
-			char[][] tokens = new char[][] {otherName, "$hashCode".toCharArray()};
+			char[][] tokens = {otherName, "$hashCode".toCharArray()};
 			long[] poss = {p, p};
 			NameReference otherFieldAccessor = new QualifiedNameReference(tokens, poss, pS, pE);
 			setGeneratedBy(otherFieldAccessor, source);
