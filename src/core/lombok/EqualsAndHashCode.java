@@ -62,9 +62,6 @@ public @interface EqualsAndHashCode {
 	 */
 	boolean doNotUseGetters() default false;
 	
-	
-	boolean precomputeHashCode() default false;
-	
 	/**
 	 * Any annotations listed here are put on the generated parameter of {@code equals} and {@code canEqual}. The syntax for this feature is: {@code @EqualsAndHashCode(onParam=@__({@AnnotationsGoHere}))}
 	 * This is useful to add for example a {@code Nullable} annotation.
