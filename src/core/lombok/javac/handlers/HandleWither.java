@@ -185,6 +185,13 @@ public class HandleWither extends JavacAnnotationHandler<Wither> {
 			case EXISTS_BY_LOMBOK:
 				return;
 			case EXISTS_BY_USER:
+				if (whineIfExists) {
+					String altNameExpl = "";
+					if (!altName.equals(methodName)) altNameExpl = String.format(" (%s)", altName);
+					source.addWarning(
+						String.format("Not generating %s(): A method with that name already exists%s", methodName, altNameExpl));
+				}
+				return;
 			default:
 			case NOT_EXISTS:
 				//continue scanning the other alt names.

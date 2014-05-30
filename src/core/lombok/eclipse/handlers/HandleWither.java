@@ -191,6 +191,13 @@ public class HandleWither extends EclipseAnnotationHandler<Wither> {
 			case EXISTS_BY_LOMBOK:
 				return;
 			case EXISTS_BY_USER:
+				if (whineIfExists) {
+					String altNameExpl = "";
+					if (!altName.equals(witherName)) altNameExpl = String.format(" (%s)", altName);
+					errorNode.addWarning(
+						String.format("Not generating %s(): A method with that name already exists%s", witherName, altNameExpl));
+				}
+				return;
 			default:
 			case NOT_EXISTS:
 				//continue scanning the other alt names.
