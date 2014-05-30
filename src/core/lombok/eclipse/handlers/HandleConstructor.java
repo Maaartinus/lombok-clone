@@ -56,6 +56,7 @@ import org.eclipse.jdt.internal.compiler.ast.ExplicitConstructorCall;
 import org.eclipse.jdt.internal.compiler.ast.Expression;
 import org.eclipse.jdt.internal.compiler.ast.FieldDeclaration;
 import org.eclipse.jdt.internal.compiler.ast.FieldReference;
+import org.eclipse.jdt.internal.compiler.ast.MessageSend;
 import org.eclipse.jdt.internal.compiler.ast.MethodDeclaration;
 import org.eclipse.jdt.internal.compiler.ast.QualifiedTypeReference;
 import org.eclipse.jdt.internal.compiler.ast.ReturnStatement;
@@ -283,7 +284,8 @@ public class HandleConstructor {
 		
 		ASTNode source = sourceNode.get();
 		TypeDeclaration typeDeclaration = ((TypeDeclaration)type.get());
-		long p = (long)source.sourceStart << 32 | source.sourceEnd;
+		int pS = source.sourceStart, pE = source.sourceEnd;
+		long p = (long)pS << 32 | pE;
 		
 		boolean isEnum = (((TypeDeclaration)type.get()).modifiers & ClassFileConstants.AccEnum) != 0;
 		
@@ -344,6 +346,26 @@ public class HandleConstructor {
 			Annotation[] copiedAnnotations = copyAnnotations(source, nonNulls, nullables, onParamAnnotations.toArray(new Annotation[0]));
 			if (copiedAnnotations.length != 0) parameter.annotations = copiedAnnotations;
 			params.add(parameter);
+		}
+		
+		if (fieldExists("$hashCode", type) != MemberExistsResult.NOT_EXISTS) {
+			FieldReference hashCodeField = new FieldReference("$hashCode".toCharArray(), p);
+			hashCodeField.receiver = new ThisReference((int)(p >> 32), (int)p);
+			
+			MessageSend hashCodeCall = new MessageSend();
+			setGeneratedBy(hashCodeCall, source);
+			
+			hashCodeCall.receiver = new ThisReference((int)(p >> 32), (int)p);
+			hashCodeCall.selector = "$hashCode".toCharArray();
+			
+			hashCodeCall.arguments = null;
+			hashCodeCall.nameSourcePosition = p;
+			hashCodeCall.sourceStart = pS;
+			hashCodeCall.sourceEnd = hashCodeCall.statementEnd = pE;
+			
+			Assignment assignment = new Assignment(hashCodeField, hashCodeCall, (int)p);
+			assignment.sourceStart = (int)(p >> 32); assignment.sourceEnd = assignment.statementEnd = (int)(p >> 32);
+			assigns.add(assignment);
 		}
 		
 		nullChecks.addAll(assigns);
