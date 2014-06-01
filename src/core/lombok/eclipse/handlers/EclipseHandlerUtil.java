@@ -475,19 +475,15 @@ public class EclipseHandlerUtil {
 	}
 	
 	public static Annotation[] copyAnnotations(ASTNode source, Annotation[]... allAnnotations) {
-		boolean allNull = true;
-		
 		List<Annotation> result = new ArrayList<Annotation>();
 		for (Annotation[] annotations : allAnnotations) {
 			if (annotations != null) {
-				allNull = false;
 				for (Annotation annotation : annotations) {
 					result.add(copyAnnotation(annotation, source));
 				}
 			}
 		}
-		if (allNull) return null;
-		return result.toArray(new Annotation[0]);
+		return result.isEmpty() ? null : result.toArray(new Annotation[0]);
 	}
 	
 	public static boolean hasAnnotation(Class<? extends java.lang.annotation.Annotation> type, EclipseNode node) {
