@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
 public @interface OnConstructor {
 	/**
 	 * Any annotations listed here are put on the generated constructor's parameter. The syntax for this feature is: {@code @OnConstructor(onParam=@__({@AnnotationsGoHere}))}	 */
-	AnyAnnotation[] onParam() default {};
+	AnyAnnotation[] onParam();
 	
 	/**
 	  * Placeholder annotation to enable the placement of annotations on the generated code.
