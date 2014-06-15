@@ -7,7 +7,6 @@ import java.lang.annotation.Target;
 	String value();
 }
 public class OnConstructor {
-	@lombok.experimental.OnConstructor
 	int x;
 
 	@java.beans.ConstructorProperties({"x"})
@@ -17,17 +16,15 @@ public class OnConstructor {
 	}
 }
 class OnConstructor2 {
-	@lombok.experimental.OnConstructor
 	@lombok.NonNull
 	String blue;
-	@lombok.experimental.OnConstructor
 	@lombok.NonNull
 	String red;
 	String black;
 
 	@java.beans.ConstructorProperties({"blue", "red", "black"})
 	@java.lang.SuppressWarnings("all")
-	public OnConstructor2(@lombok.NonNull @MyAnnotation("colored") final String blue, @lombok.NonNull final String red, final String black) {
+	public OnConstructor2(@lombok.NonNull @MyAnnotation("colored") final String blue, @lombok.NonNull @MyAnnotation("colored") final String red, final String black) {
 		if (blue == null) {
 			throw new java.lang.NullPointerException("blue");
 		}
@@ -41,7 +38,7 @@ class OnConstructor2 {
 
 	@java.beans.ConstructorProperties({"blue", "red"})
 	@java.lang.SuppressWarnings("all")
-	public OnConstructor2(@lombok.NonNull final String blue, @lombok.NonNull final String red) {
+	public OnConstructor2(@lombok.NonNull @MyAnnotation("colored") final String blue, @lombok.NonNull @MyAnnotation("colored") final String red) {
 		if (blue == null) {
 			throw new java.lang.NullPointerException("blue");
 		}
