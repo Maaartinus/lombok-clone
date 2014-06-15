@@ -29,6 +29,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import lombok.AccessLevel;
@@ -41,6 +42,7 @@ import lombok.core.AST.Kind;
 import lombok.core.AnnotationValues;
 import lombok.eclipse.EclipseAnnotationHandler;
 import lombok.eclipse.EclipseNode;
+import lombok.experimental.OnConstructor;
 
 import org.eclipse.jdt.internal.compiler.ast.ASTNode;
 import org.eclipse.jdt.internal.compiler.ast.AllocationExpression;
@@ -334,6 +336,16 @@ public class HandleConstructor {
 				if (nullCheck != null) nullChecks.add(nullCheck);
 			}
 			parameter.annotations = copyAnnotations(source, nonNulls, nullables);
+			List<Annotation> extraAnnotations = Collections.emptyList();
+			for (EclipseNode node : fieldNode.down()) {
+				if (annotationTypeMatches(OnConstructor.class, node)) {
+					Annotation annotation = (Annotation) node.get();
+					extraAnnotations = unboxAndRemoveAnnotationParameter(annotation, "onParam", "@OnConstructor(onParam=", type);
+					break;
+				}
+			}
+
+			Annotation[] copiedAnnotations = copyAnnotations(source, nonNulls, nullables, extraAnnotations.toArray(new Annotation[0]));
 			params.add(parameter);
 		}
 		
