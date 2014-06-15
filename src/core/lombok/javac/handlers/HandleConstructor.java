@@ -32,6 +32,7 @@ import lombok.core.AnnotationValues;
 import lombok.core.AST.Kind;
 import lombok.delombok.LombokOptionsFactory;
 import lombok.experimental.Builder;
+import lombok.experimental.OnConstructor;
 import lombok.javac.JavacAnnotationHandler;
 import lombok.javac.JavacNode;
 import lombok.javac.JavacTreeMaker;
@@ -260,8 +261,18 @@ public class HandleConstructor {
 			Name rawName = field.name;
 			List<JCAnnotation> nonNulls = findAnnotations(fieldNode, NON_NULL_PATTERN);
 			List<JCAnnotation> nullables = findAnnotations(fieldNode, NULLABLE_PATTERN);
+			
+			List<JCAnnotation> extraAnnotations = List.nil();
+			for (JavacNode node : fieldNode.down()) {
+				if (annotationTypeMatches(OnConstructor.class, node)) {
+					JCAnnotation annotation = (JCAnnotation) (node.get());
+					extraAnnotations = unboxAndRemoveAnnotationParameter(annotation, "onParam", "@OnConstructor(onParam=", typeNode);
+					break;
+				}
+			}
+			
 			long flags = JavacHandlerUtil.addFinalIfNeeded(Flags.PARAMETER, typeNode.getContext());
-			JCVariableDecl param = maker.VarDef(maker.Modifiers(flags, nonNulls.appendList(nullables)), fieldName, field.vartype, null);
+			JCVariableDecl param = maker.VarDef(maker.Modifiers(flags, nonNulls.appendList(nullables).appendList(extraAnnotations)), fieldName, field.vartype, null);
 			params.append(param);
 			JCFieldAccess thisX = maker.Select(maker.Ident(fieldNode.toName("this")), rawName);
 			JCAssign assign = maker.Assign(thisX, maker.Ident(fieldName));
