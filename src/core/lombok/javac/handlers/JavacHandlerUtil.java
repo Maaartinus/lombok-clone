@@ -509,6 +509,19 @@ public class JavacHandlerUtil {
 		return ((JCVariableDecl) field.get()).name;
 	}
 	
+	public static <A extends java.lang.annotation.Annotation> JCAnnotation getAnnotationNodeForField(JavacNode field, Class<A> annotationClass) {
+		// TODO No idea if the outer loop makes any sense here.
+		for (JavacNode current = field; current != null; current = current.up()) {
+			for (JavacNode node : field.down()) {
+				if (annotationTypeMatches(annotationClass, node)) {
+					return (JCAnnotation) node.get();
+				}
+			}
+		}
+		
+		return null;
+	}
+
 	public static AnnotationValues<Accessors> getAccessorsForField(JavacNode field) {
 		for (JavacNode node : field.down()) {
 			if (annotationTypeMatches(Accessors.class, node)) {
