@@ -1128,7 +1128,20 @@ public class EclipseHandlerUtil {
 		
 		return ((FieldDeclaration) field.get()).name;
 	}
-	
+
+	public static <A extends java.lang.annotation.Annotation> EclipseNode getAnnotationNodeForField(EclipseNode field, Class<A> annotationClass) {
+		// TODO No idea if the outer loop makes any sense here.
+		for (EclipseNode current = field; current != null; current = current.up()) {
+			for (EclipseNode node : field.down()) {
+				if (annotationTypeMatches(annotationClass, node)) {
+					return node;
+				}
+			}
+		}
+		
+		return null;
+	}
+
 	public static AnnotationValues<Accessors> getAccessorsForField(EclipseNode field) {
 		for (EclipseNode node : field.down()) {
 			if (annotationTypeMatches(Accessors.class, node)) {
