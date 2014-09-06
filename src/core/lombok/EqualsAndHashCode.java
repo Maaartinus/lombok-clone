@@ -63,6 +63,19 @@ public @interface EqualsAndHashCode {
 	boolean doNotUseGetters() default false;
 	
 	/**
+	 * When true, a private final field {@code $hashCode} and a private method {@code $hashCode()} get created.
+	 * The method computes what normally generated {@code hashCode()} does and gets used at the end of each generated constructor to initialize the field.
+	 * The normal {@code hashCode} just returns the value of the field.
+	 * The generated equals gets extended by comparing {@code this.$hashCode == that.$hashCode} before looking at other fields,
+	 * which usually leads to a speed up as there are good chances of an early exit.
+	 * <p>
+	 * <em>Use this for immutable objects only. Put {@code $hashCode = $hashCode} at the end of each hand-written constructor.</em>
+	 *
+	 * <strong>default: false</strong>
+	 */
+	boolean precomputed() default false;
+
+	/**
 	 * Any annotations listed here are put on the generated parameter of {@code equals} and {@code canEqual}. The syntax for this feature is: {@code @EqualsAndHashCode(onParam=@__({@AnnotationsGoHere}))}
 	 * This is useful to add for example a {@code Nullable} annotation.
 	 */
