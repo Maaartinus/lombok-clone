@@ -72,6 +72,7 @@ import com.sun.tools.javac.util.Name;
 public class HandleEqualsAndHashCode extends JavacAnnotationHandler<EqualsAndHashCode> {
 	private static final String RESULT_NAME = "result";
 	private static final String PRIME_NAME = "PRIME";
+	private static final String PRECOMPUTED_HASH_CODE_NAME = "$hashCode";
 	
 	public void checkForBogusFieldNames(JavacNode type, AnnotationValues<EqualsAndHashCode> annotation) {
 		if (annotation.isExplicit("exclude")) {
@@ -111,7 +112,9 @@ public class HandleEqualsAndHashCode extends JavacAnnotationHandler<EqualsAndHas
 		boolean doNotUseGetters = annotation.isExplicit("doNotUseGetters") || doNotUseGettersConfiguration == null ? ann.doNotUseGetters() : doNotUseGettersConfiguration;
 		FieldAccess fieldAccess = doNotUseGetters ? FieldAccess.PREFER_FIELD : FieldAccess.GETTER;
 		
-		generateMethods(typeNode, annotationNode, excludes, includes, callSuper, true, fieldAccess, onParam);
+		boolean precomputed = ann.precomputed();
+		generateMethods(typeNode, annotationNode, excludes, includes, callSuper, true, fieldAccess, onParam, precomputed);
+		if (precomputed) createHashCodeField(typeNode, annotationNode.get());
 	}
 	
 	public void generateEqualsAndHashCodeForType(JavacNode typeNode, JavacNode source) {
@@ -120,11 +123,11 @@ public class HandleEqualsAndHashCode extends JavacAnnotationHandler<EqualsAndHas
 			return;
 		}
 		
-		generateMethods(typeNode, source, null, null, null, false, FieldAccess.GETTER, List.<JCAnnotation>nil());
+		generateMethods(typeNode, source, null, null, null, false, FieldAccess.GETTER, List.<JCAnnotation>nil(), false);
 	}
 	
 	public void generateMethods(JavacNode typeNode, JavacNode source, List<String> excludes, List<String> includes,
-			Boolean callSuper, boolean whineIfExists, FieldAccess fieldAccess, List<JCAnnotation> onParam) {
+			Boolean callSuper, boolean whineIfExists, FieldAccess fieldAccess, List<JCAnnotation> onParam, boolean precomputed) {
 		boolean notAClass = true;
 		if (typeNode.get() instanceof JCClassDecl) {
 			long flags = ((JCClassDecl)typeNode.get()).mods.flags;
@@ -162,6 +165,13 @@ public class HandleEqualsAndHashCode extends JavacAnnotationHandler<EqualsAndHas
 		}
 		
 		ListBuffer<JavacNode> nodesForEquality = new ListBuffer<JavacNode>();
+		if (precomputed) {
+			for (JavacNode child : typeNode.down()) {
+				if (child.getKind() != Kind.FIELD) continue;
+				JCVariableDecl fieldDecl = (JCVariableDecl) child.get();
+				if (PRECOMPUTED_HASH_CODE_NAME.equals(fieldDecl.name.toString())) nodesForEquality.append(child);
+			}
+		}
 		if (includes != null) {
 			for (JavacNode child : typeNode.down()) {
 				if (child.getKind() != Kind.FIELD) continue;
@@ -223,16 +233,20 @@ public class HandleEqualsAndHashCode extends JavacAnnotationHandler<EqualsAndHas
 		}
 		
 		if (methodReallyExists("hashCode", typeNode, 0) == MemberExistsResult.NOT_EXISTS) {
-			JCMethodDecl hashCodeMethod = createHashCode(typeNode, nodesForEquality.toList(), callSuper, fieldAccess, source.get());
+			JCMethodDecl hashCodeMethod = createHashCode(typeNode, nodesForEquality.toList(), callSuper, fieldAccess, source.get(), precomputed);
 			injectMethod(typeNode, hashCodeMethod);
+			if (precomputed) {
+				JCMethodDecl hashCodeMethodGetter = createHashCodeGetter(typeNode, fieldAccess, source.get());
+				injectMethod(typeNode, hashCodeMethod);
+			}
 		}
 	}
 	
-	public JCMethodDecl createHashCode(JavacNode typeNode, List<JavacNode> fields, boolean callSuper, FieldAccess fieldAccess, JCTree source) {
+	public JCMethodDecl createHashCode(JavacNode typeNode, List<JavacNode> fields, boolean callSuper, FieldAccess fieldAccess, JCTree source, boolean precomputed) {
 		JavacTreeMaker maker = typeNode.getTreeMaker();
 		
 		JCAnnotation overrideAnnotation = maker.Annotation(genJavaLangTypeRef(typeNode, "Override"), List.<JCExpression>nil());
-		JCModifiers mods = maker.Modifiers(Flags.PUBLIC, List.of(overrideAnnotation));
+		JCModifiers mods = maker.Modifiers(Flags.PUBLIC, precomputed ? List.<JCAnnotation>nil() : List.of(overrideAnnotation));
 		JCExpression returnType = maker.TypeIdent(CTC_INT);
 		ListBuffer<JCStatement> statements = new ListBuffer<JCStatement>();
 		
@@ -328,10 +342,44 @@ public class HandleEqualsAndHashCode extends JavacAnnotationHandler<EqualsAndHas
 		}
 		
 		JCBlock body = maker.Block(0, statements.toList());
-		return recursiveSetGeneratedBy(maker.MethodDef(mods, typeNode.toName("hashCode"), returnType,
+		return recursiveSetGeneratedBy(maker.MethodDef(mods, typeNode.toName(precomputed ? PRECOMPUTED_HASH_CODE_NAME : "hashCode"), returnType,
 				List.<JCTypeParameter>nil(), List.<JCVariableDecl>nil(), List.<JCExpression>nil(), body, null), source, typeNode.getContext());
 	}
 
+	public JCMethodDecl createHashCodeGetter(JavacNode typeNode, FieldAccess fieldAccess, JCTree source) {
+		JavacTreeMaker maker = typeNode.getTreeMaker();
+		
+		JCAnnotation overrideAnnotation = maker.Annotation(genJavaLangTypeRef(typeNode, "Override"), List.<JCExpression>nil());
+		JCModifiers mods = maker.Modifiers(Flags.PUBLIC, List.of(overrideAnnotation));
+		JCExpression returnType = maker.TypeIdent(CTC_INT);
+		ListBuffer<JCStatement> statements = new ListBuffer<JCStatement>();
+		
+		Name resultName = typeNode.toName(RESULT_NAME);
+		
+		/* int result = 1; */ {
+			statements.append(maker.VarDef(maker.Modifiers(0), resultName, maker.TypeIdent(CTC_INT), maker.Literal(1)));
+		}
+		
+		JavacNode precomputedFieldNode = null;
+		for (JavacNode fieldNode : typeNode.down()) {
+			if (fieldNode.getKind() != Kind.FIELD) continue;
+			JCVariableDecl fieldDecl = (JCVariableDecl) fieldNode.get();
+			if (PRECOMPUTED_HASH_CODE_NAME.equals(fieldDecl.name.toString())) precomputedFieldNode = fieldNode;
+		}
+
+		JCExpression fieldAccessor = createFieldAccessor(maker, precomputedFieldNode, fieldAccess);
+		statements.append(createResultCalculation(typeNode, fieldAccessor));
+		
+		
+		/* return result; */ {
+			statements.append(maker.Return(maker.Ident(resultName)));
+		}
+		
+		JCBlock body = maker.Block(0, statements.toList());
+		return recursiveSetGeneratedBy(maker.MethodDef(mods, typeNode.toName("hashCode"), returnType,
+				List.<JCTypeParameter>nil(), List.<JCVariableDecl>nil(), List.<JCExpression>nil(), body, null), source, typeNode.getContext());
+	}
+	
 	public JCExpressionStatement createResultCalculation(JavacNode typeNode, JCExpression expr) {
 		/* result = result * PRIME + (expr); */
 		JavacTreeMaker maker = typeNode.getTreeMaker();
@@ -524,6 +572,18 @@ public class HandleEqualsAndHashCode extends JavacAnnotationHandler<EqualsAndHas
 		return recursiveSetGeneratedBy(maker.MethodDef(mods, canEqualName, returnType, List.<JCTypeParameter>nil(), params, List.<JCExpression>nil(), body, null), source, typeNode.getContext());
 	}
 	
+	private static void createHashCodeField(JavacNode typeNode, JCTree source) {
+		JavacTreeMaker maker = typeNode.getTreeMaker();
+		
+		JCExpression loggerType = maker.TypeIdent(Javac.CTC_INT);
+
+		JCVariableDecl fieldDecl = recursiveSetGeneratedBy(maker.VarDef(
+				maker.Modifiers(Flags.PRIVATE | Flags.FINAL),
+				typeNode.toName(PRECOMPUTED_HASH_CODE_NAME), loggerType, null), source, typeNode.getContext());
+
+		injectField(typeNode, fieldDecl);
+	}
+
 	public JCStatement generateCompareFloatOrDouble(JCExpression thisDotField, JCExpression otherDotField,
 			JavacTreeMaker maker, JavacNode node, boolean isDouble) {
 		/* if (Float.compare(fieldName, other.fieldName) != 0) return false; */
