@@ -50,5 +50,6 @@
 	<classpathentry kind="lib" path="lib/test/org.slf4j-slf4j-ext.jar" sourcepath="lib/contrib/org.slf4j-slf4j-ext.jar"/>
 	<classpathentry kind="lib" path="lib/test/ch.qos.cal10n-cal10n-api.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="lib" path="/REPO/fmt-jj.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
