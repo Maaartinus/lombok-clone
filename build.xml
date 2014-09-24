@@ -750,7 +750,7 @@ You can also create your own by writing a 'testenvironment.properties' file. The
 	</target>
 
 	<target name="run" description="Builds and runs THE lombok.jar and also copies it to REPO." depends="dist">
-		<copy todir="../REPO" file="dist/lombok.jar" />
+		<copy todir="../REPO/lib" file="dist/lombok.jar" />
 		<java jar="dist/lombok.jar" fork="true" />
 	</target>
 </project>
