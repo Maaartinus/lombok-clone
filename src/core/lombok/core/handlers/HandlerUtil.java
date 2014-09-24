@@ -57,7 +57,7 @@ public class HandlerUtil {
 	private HandlerUtil() {}
 	
 	public static int primeForHashcode() {
-		return 59;
+		return 113;
 	}
 	
 	public static int primeForTrue() {
